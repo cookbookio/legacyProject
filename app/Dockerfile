@@ -34,6 +34,9 @@ COPY templates/ templates/
 # Copy the database file
 COPY demo.db .
 
+# Copy openapi schema
+COPY api-schema.yaml .
+
 EXPOSE 3000
 
 CMD ["./cookbook"]

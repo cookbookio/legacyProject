@@ -1,15 +1,20 @@
-openapi: 3.0.3
+openapi: 3.1.0
 info:
   title: Recipe Cookbook API
   version: 1.0.0
   description: A recipe cookbook API with detailed cooking instructions and ingredient measurements
+
+servers:
+  - url: http://localhost:3000
+    description: Local development server
+
 paths:
   /:
     get:
       operationId: home
       description: Home page displaying all recipes with 90s styling
       tags:
-      - web
+        - web
       responses:
         '200':
           description: HTML page with recipe list
@@ -21,16 +26,16 @@ paths:
   /recipes/{id}/:
     get:
       operationId: recipe_detail
-      description: Recipe detail page with full cooking instructions (WARNING - Vulnerable to SQL injection for educational purposes)
+      description: Recipe detail page with full cooking instructions
       tags:
-      - web
+        - web
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: Recipe ID
-        required: true
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: Recipe ID
+          required: true
       responses:
         '200':
           description: HTML page with recipe details
@@ -38,13 +43,29 @@ paths:
             text/html:
               schema:
                 type: string
+        '404':
+          description: Recipe not found
+
+  /api:
+    get:
+      operationId: api_overview
+      description: API overview with available endpoints
+      tags:
+        - api
+      responses:
+        '200':
+          description: JSON object with available API routes
+          content:
+            application/json:
+              schema:
+                type: object
 
   /api/user/create/:
     post:
-      operationId: user_create_create
-      description: Create a new user in the system.
+      operationId: user_create
+      description: Create a new user in the system
       tags:
-      - user
+        - user
       requestBody:
         content:
           application/json:
@@ -53,30 +74,34 @@ paths:
         required: true
       responses:
         '201':
+          description: User created successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
-          description: ''
+        '400':
+          description: Invalid request body
+        '500':
+          description: Failed to create user
 
   /api/user/me/:
     get:
       operationId: user_me_retrieve
-      description: Manage the authenticated user.
+      description: Get the authenticated user
       tags:
-      - user
+        - user
       responses:
         '200':
+          description: Current user information
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
-          description: ''
     put:
       operationId: user_me_update
-      description: Manage the authenticated user.
+      description: Update the authenticated user
       tags:
-      - user
+        - user
       requestBody:
         content:
           application/json:
@@ -85,16 +110,18 @@ paths:
         required: true
       responses:
         '200':
+          description: User updated successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
-          description: ''
+        '400':
+          description: Invalid request body
     patch:
       operationId: user_me_partial_update
-      description: Manage the authenticated user.
+      description: Partially update the authenticated user
       tags:
-      - user
+        - user
       requestBody:
         content:
           application/json:
@@ -102,18 +129,20 @@ paths:
               $ref: '#/components/schemas/PatchedUserRequest'
       responses:
         '200':
+          description: User updated successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
-          description: ''
+        '400':
+          description: Invalid request body
 
   /api/user/token/:
     post:
       operationId: user_token_create
-      description: Create a new auth token for user.
+      description: Create a new auth token for user
       tags:
-      - user
+        - user
       requestBody:
         content:
           application/json:
@@ -122,43 +151,47 @@ paths:
         required: true
       responses:
         '200':
+          description: Auth token created
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/AuthToken'
-          description: ''
+        '400':
+          description: Invalid request body
 
   /api/recipe/recipes/:
     get:
       operationId: recipe_recipes_list
-      description: View for manage recipe APIs.
+      description: List all recipes with optional filtering
       parameters:
-      - in: query
-        name: ingredients
-        schema:
-          type: string
-        description: Comma separated list of ingredient IDs to filter
-      - in: query
-        name: tags
-        schema:
-          type: string
-        description: Comma separated list of tag IDs to filter
+        - in: query
+          name: ingredients
+          schema:
+            type: string
+          description: Comma separated list of ingredient IDs to filter
+        - in: query
+          name: tags
+          schema:
+            type: string
+          description: Comma separated list of tag IDs to filter
       tags:
-      - recipe
+        - recipe
       responses:
         '200':
+          description: List of recipes
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/Recipe'
-          description: ''
+        '500':
+          description: Failed to get recipes
     post:
       operationId: recipe_recipes_create
-      description: View for manage recipe APIs.
+      description: Create a new recipe
       tags:
-      - recipe
+        - recipe
       requestBody:
         content:
           application/json:
@@ -167,44 +200,52 @@ paths:
         required: true
       responses:
         '201':
+          description: Recipe created successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/RecipeDetail'
-          description: ''
+        '400':
+          description: Invalid request body
+        '500':
+          description: Failed to create recipe
 
   /api/recipe/recipes/{id}/:
     get:
       operationId: recipe_recipes_retrieve
-      description: View for manage recipe APIs.
+      description: Get a specific recipe by ID
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this recipe.
-        required: true
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: A unique integer value identifying this recipe
+          required: true
       tags:
-      - recipe
+        - recipe
       responses:
         '200':
+          description: Recipe details
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/RecipeDetail'
-          description: ''
+        '404':
+          description: Recipe not found
+        '500':
+          description: Failed to get recipe
     put:
       operationId: recipe_recipes_update
-      description: View for manage recipe APIs.
+      description: Update a recipe
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this recipe.
-        required: true
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: A unique integer value identifying this recipe
+          required: true
       tags:
-      - recipe
+        - recipe
       requestBody:
         content:
           application/json:
@@ -213,23 +254,27 @@ paths:
         required: true
       responses:
         '200':
+          description: Recipe updated successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/RecipeDetail'
-          description: ''
+        '400':
+          description: Invalid request body
+        '404':
+          description: Recipe not found
     patch:
       operationId: recipe_recipes_partial_update
-      description: View for manage recipe APIs.
+      description: Partially update a recipe
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this recipe.
-        required: true
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: A unique integer value identifying this recipe
+          required: true
       tags:
-      - recipe
+        - recipe
       requestBody:
         content:
           application/json:
@@ -237,92 +282,100 @@ paths:
               $ref: '#/components/schemas/PatchedRecipeDetailRequest'
       responses:
         '200':
+          description: Recipe updated successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/RecipeDetail'
-          description: ''
+        '400':
+          description: Invalid request body
+        '404':
+          description: Recipe not found
     delete:
       operationId: recipe_recipes_destroy
-      description: View for manage recipe APIs.
+      description: Delete a recipe
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this recipe.
-        required: true
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: A unique integer value identifying this recipe
+          required: true
       tags:
-      - recipe
+        - recipe
       responses:
         '204':
-          description: No response body
+          description: Recipe deleted successfully
+        '404':
+          description: Recipe not found
 
   /api/recipe/recipes/{id}/upload-image/:
     post:
-      operationId: recipe_recipes_upload_image_create
-      description: Upload an image to recipe.
+      operationId: recipe_recipes_upload_image
+      description: Upload an image to recipe
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this recipe.
-        required: true
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: A unique integer value identifying this recipe
+          required: true
       tags:
-      - recipe
+        - recipe
       requestBody:
         content:
-          application/json:
+          multipart/form-data:
             schema:
               $ref: '#/components/schemas/RecipeImageRequest'
         required: true
       responses:
         '200':
+          description: Image uploaded successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/RecipeImage'
-          description: ''
 
   /api/recipe/ingredients/:
     get:
       operationId: recipe_ingredients_list
-      description: Manage ingredients in the database.
+      description: List all ingredients
       parameters:
-      - in: query
-        name: assigned_only
-        schema:
-          type: integer
-          enum:
-          - 0
-          - 1
-        description: Filter by items assigned to recipes.
+        - in: query
+          name: assigned_only
+          schema:
+            type: integer
+            enum:
+              - 0
+              - 1
+          description: Filter by items assigned to recipes
       tags:
-      - recipe
+        - recipe
       responses:
         '200':
+          description: List of ingredients
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/Ingredient'
-          description: ''
+        '500':
+          description: Failed to get ingredients
 
   /api/recipe/ingredients/{id}/:
     put:
       operationId: recipe_ingredients_update
-      description: Manage ingredients in the database.
+      description: Update an ingredient
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this ingredient.
-        required: true
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: A unique integer value identifying this ingredient
+          required: true
       tags:
-      - recipe
+        - recipe
       requestBody:
         content:
           application/json:
@@ -331,23 +384,27 @@ paths:
         required: true
       responses:
         '200':
+          description: Ingredient updated successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Ingredient'
-          description: ''
+        '400':
+          description: Invalid request body
+        '404':
+          description: Ingredient not found
     patch:
       operationId: recipe_ingredients_partial_update
-      description: Manage ingredients in the database.
+      description: Partially update an ingredient
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this ingredient.
-        required: true
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: A unique integer value identifying this ingredient
+          required: true
       tags:
-      - recipe
+        - recipe
       requestBody:
         content:
           application/json:
@@ -355,65 +412,73 @@ paths:
               $ref: '#/components/schemas/PatchedIngredientRequest'
       responses:
         '200':
+          description: Ingredient updated successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Ingredient'
-          description: ''
+        '400':
+          description: Invalid request body
+        '404':
+          description: Ingredient not found
     delete:
       operationId: recipe_ingredients_destroy
-      description: Manage ingredients in the database.
+      description: Delete an ingredient
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this ingredient.
-        required: true
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: A unique integer value identifying this ingredient
+          required: true
       tags:
-      - recipe
+        - recipe
       responses:
         '204':
-          description: No response body
+          description: Ingredient deleted successfully
+        '404':
+          description: Ingredient not found
 
   /api/recipe/tags/:
     get:
       operationId: recipe_tags_list
-      description: Manage tags in the database.
+      description: List all tags
       parameters:
-      - in: query
-        name: assigned_only
-        schema:
-          type: integer
-          enum:
-          - 0
-          - 1
-        description: Filter by items assigned to recipes.
+        - in: query
+          name: assigned_only
+          schema:
+            type: integer
+            enum:
+              - 0
+              - 1
+          description: Filter by items assigned to recipes
       tags:
-      - recipe
+        - recipe
       responses:
         '200':
+          description: List of tags
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/Tag'
-          description: ''
+        '500':
+          description: Failed to get tags
 
   /api/recipe/tags/{id}/:
     put:
       operationId: recipe_tags_update
-      description: Manage tags in the database.
+      description: Update a tag
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this tag.
-        required: true
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: A unique integer value identifying this tag
+          required: true
       tags:
-      - recipe
+        - recipe
       requestBody:
         content:
           application/json:
@@ -422,23 +487,27 @@ paths:
         required: true
       responses:
         '200':
+          description: Tag updated successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Tag'
-          description: ''
+        '400':
+          description: Invalid request body
+        '404':
+          description: Tag not found
     patch:
       operationId: recipe_tags_partial_update
-      description: Manage tags in the database.
+      description: Partially update a tag
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this tag.
-        required: true
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: A unique integer value identifying this tag
+          required: true
       tags:
-      - recipe
+        - recipe
       requestBody:
         content:
           application/json:
@@ -446,32 +515,38 @@ paths:
               $ref: '#/components/schemas/PatchedTagRequest'
       responses:
         '200':
+          description: Tag updated successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Tag'
-          description: ''
+        '400':
+          description: Invalid request body
+        '404':
+          description: Tag not found
     delete:
       operationId: recipe_tags_destroy
-      description: Manage tags in the database.
+      description: Delete a tag
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this tag.
-        required: true
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: A unique integer value identifying this tag
+          required: true
       tags:
-      - recipe
+        - recipe
       responses:
         '204':
-          description: No response body
+          description: Tag deleted successfully
+        '404':
+          description: Tag not found
 
 components:
   schemas:
     AuthToken:
       type: object
-      description: Serializer for the user auth token.
+      description: Serializer for the user auth token
       properties:
         email:
           type: string
@@ -479,12 +554,12 @@ components:
         password:
           type: string
       required:
-      - email
-      - password
+        - email
+        - password
 
     AuthTokenRequest:
       type: object
-      description: Serializer for the user auth token.
+      description: Serializer for the user auth token
       properties:
         email:
           type: string
@@ -494,12 +569,12 @@ components:
           type: string
           minLength: 1
       required:
-      - email
-      - password
+        - email
+        - password
 
     Ingredient:
       type: object
-      description: Serializer for ingredients.
+      description: Serializer for ingredients
       properties:
         id:
           type: integer
@@ -514,12 +589,12 @@ components:
           type: string
           description: Unit of measurement (e.g., "g", "tbsp", "pieces")
       required:
-      - id
-      - name
+        - id
+        - name
 
     IngredientRequest:
       type: object
-      description: Serializer for ingredients.
+      description: Serializer for ingredients
       properties:
         name:
           type: string
@@ -530,11 +605,11 @@ components:
         unit:
           type: string
       required:
-      - name
+        - name
 
     PatchedIngredientRequest:
       type: object
-      description: Serializer for ingredients.
+      description: Serializer for ingredients
       properties:
         name:
           type: string
@@ -547,7 +622,7 @@ components:
 
     PatchedRecipeDetailRequest:
       type: object
-      description: Serializer for recipe detail view.
+      description: Serializer for recipe detail view
       properties:
         title:
           type: string
@@ -556,11 +631,11 @@ components:
         time_minutes:
           type: integer
           maximum: 2147483647
-          minimum: -2147483648
+          minimum: 1
         price:
           type: string
           format: decimal
-          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+          pattern: '^-?\d{0,3}(?:\.\d{0,2})?$'
         link:
           type: string
           maxLength: 255
@@ -578,7 +653,7 @@ components:
 
     PatchedTagRequest:
       type: object
-      description: Serializer for tags.
+      description: Serializer for tags
       properties:
         name:
           type: string
@@ -587,7 +662,7 @@ components:
 
     PatchedUserRequest:
       type: object
-      description: Serializer for the user object.
+      description: Serializer for the user object
       properties:
         email:
           type: string
@@ -606,7 +681,7 @@ components:
 
     Recipe:
       type: object
-      description: Serializer for recipes.
+      description: Serializer for recipes
       properties:
         id:
           type: integer
@@ -617,11 +692,11 @@ components:
         time_minutes:
           type: integer
           maximum: 2147483647
-          minimum: -2147483648
+          minimum: 1
         price:
           type: string
           format: decimal
-          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+          pattern: '^-?\d{0,3}(?:\.\d{0,2})?$'
         link:
           type: string
           maxLength: 255
@@ -633,15 +708,18 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Ingredient'
+        description:
+          type: string
+          description: Step-by-step cooking instructions
       required:
-      - id
-      - price
-      - time_minutes
-      - title
+        - id
+        - price
+        - time_minutes
+        - title
 
     RecipeDetail:
       type: object
-      description: Serializer for recipe detail view with step-by-step instructions.
+      description: Serializer for recipe detail view with step-by-step instructions
       properties:
         id:
           type: integer
@@ -652,11 +730,11 @@ components:
         time_minutes:
           type: integer
           maximum: 2147483647
-          minimum: -2147483648
+          minimum: 1
         price:
           type: string
           format: decimal
-          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+          pattern: '^-?\d{0,3}(?:\.\d{0,2})?$'
         link:
           type: string
           maxLength: 255
@@ -672,14 +750,14 @@ components:
           type: string
           description: Step-by-step cooking instructions for the recipe
       required:
-      - id
-      - price
-      - time_minutes
-      - title
+        - id
+        - price
+        - time_minutes
+        - title
 
     RecipeDetailRequest:
       type: object
-      description: Serializer for recipe detail view.
+      description: Serializer for recipe detail view
       properties:
         title:
           type: string
@@ -688,11 +766,11 @@ components:
         time_minutes:
           type: integer
           maximum: 2147483647
-          minimum: -2147483648
+          minimum: 1
         price:
           type: string
           format: decimal
-          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+          pattern: '^-?\d{0,3}(?:\.\d{0,2})?$'
         link:
           type: string
           maxLength: 255
@@ -708,13 +786,13 @@ components:
           type: string
           description: Step-by-step cooking instructions
       required:
-      - price
-      - time_minutes
-      - title
+        - price
+        - time_minutes
+        - title
 
     RecipeImage:
       type: object
-      description: Serializer for uploading images to recipes.
+      description: Serializer for uploading images to recipes
       properties:
         id:
           type: integer
@@ -724,23 +802,21 @@ components:
           format: uri
           nullable: true
       required:
-      - id
-      - image
+        - id
 
     RecipeImageRequest:
       type: object
-      description: Serializer for uploading images to recipes.
+      description: Serializer for uploading images to recipes
       properties:
         image:
           type: string
           format: binary
-          nullable: true
       required:
-      - image
+        - image
 
     Tag:
       type: object
-      description: Serializer for tags.
+      description: Serializer for tags
       properties:
         id:
           type: integer
@@ -749,23 +825,23 @@ components:
           type: string
           maxLength: 255
       required:
-      - id
-      - name
+        - id
+        - name
 
     TagRequest:
       type: object
-      description: Serializer for tags.
+      description: Serializer for tags
       properties:
         name:
           type: string
           minLength: 1
           maxLength: 255
       required:
-      - name
+        - name
 
     User:
       type: object
-      description: Serializer for the user object.
+      description: Serializer for the user object
       properties:
         email:
           type: string
@@ -775,12 +851,12 @@ components:
           type: string
           maxLength: 255
       required:
-      - email
-      - name
+        - email
+        - name
 
     UserRequest:
       type: object
-      description: Serializer for the user object.
+      description: Serializer for the user object
       properties:
         email:
           type: string
@@ -797,6 +873,6 @@ components:
           minLength: 1
           maxLength: 255
       required:
-      - email
-      - name
-      - password
+        - email
+        - name
+        - password

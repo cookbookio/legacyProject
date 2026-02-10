@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"os"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -118,6 +119,39 @@ func main() {
 	})
 	http.HandleFunc("/api/recipe/ingredients/", recipeIngredientsHandler)
 	http.HandleFunc("/api/recipe/tags/", recipeTagsHandler)
+
+	// For OpenAPI (swagger) spec
+	http.HandleFunc("/api-docs", func(w http.ResponseWriter, r *http.Request) {
+    // 1. Read your existing yaml file from disk
+    yamlFile, err := os.ReadFile("api-schema.yaml")
+    if err != nil {
+        http.Error(w, "Could not find api-schema.yaml", 500)
+        return
+    }
+
+    // 2. Send back the HTML that renders that file
+    fmt.Fprintf(w, `
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css">
+        <title>API Documentation</title>
+    </head>
+    <body>
+        <div id="swagger-ui"></div>
+        <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
+        <script src="https://unpkg.com/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+        <script>
+            // This takes the text from your file and tells Swagger to show it
+            const spec = jsyaml.load(%q);
+            SwaggerUIBundle({
+                spec: spec,
+                dom_id: '#swagger-ui',
+            });
+        </script>
+    </body>
+    </html>`, string(yamlFile))
+})
 
 	// Start server
 	fmt.Println("Server starting on :3000...")
