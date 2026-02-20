@@ -80,7 +80,7 @@ func main() {
 	var err error
 
 	// Initialize database
-	db, err = sql.Open("sqlite3", databasePath)
+	db, err = sql.Open("sqlite", databasePath)
 	if err != nil {
 		log.Fatal("Failed to open database:", err)
 	}
