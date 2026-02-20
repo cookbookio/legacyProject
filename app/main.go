@@ -16,24 +16,24 @@ import (
 
 // Database structure
 type Recipe struct {
-	ID          int     `json:"id"`
-	Title       string  `json:"title"`
-	TimeMinutes int     `json:"time_minutes"`
-	Price       string  `json:"price"`
-	Link        string  `json:"link"`
-	Description string  `json:"description"`
+	ID          int          `json:"id"`
+	Title       string       `json:"title"`
+	TimeMinutes int          `json:"time_minutes"`
+	Price       string       `json:"price"`
+	Link        string       `json:"link"`
+	Description string       `json:"description"`
 	Ingredients []Ingredient `json:"ingredients"`
-	Tags        []Tag   `json:"tags"`
+	Tags        []Tag        `json:"tags"`
 }
 
 type RecipeSimple struct {
-	ID          int     `json:"id"`
-	Title       string  `json:"title"`
-	TimeMinutes int     `json:"time_minutes"`
-	Price       string  `json:"price"`
-	Link        string  `json:"link"`
+	ID          int          `json:"id"`
+	Title       string       `json:"title"`
+	TimeMinutes int          `json:"time_minutes"`
+	Price       string       `json:"price"`
+	Link        string       `json:"link"`
 	Ingredients []Ingredient `json:"ingredients"`
-	Tags        []Tag   `json:"tags"`
+	Tags        []Tag        `json:"tags"`
 }
 
 type Ingredient struct {
@@ -71,8 +71,8 @@ type RecipeImage struct {
 
 // Global variables
 var (
-	db          *sql.DB
-	templates   *template.Template
+	db           *sql.DB
+	templates    *template.Template
 	databasePath = "./demo.db"
 )
 
@@ -91,7 +91,7 @@ func main() {
 
 	// Create template function map
 	funcMap := template.FuncMap{
-		"add": func(a, b int) int { return a + b },
+		"add":   func(a, b int) int { return a + b },
 		"split": strings.Split,
 	}
 
@@ -300,51 +300,51 @@ func seedDatabase() {
 		// Add recipe ingredients and tags based on recipe type
 		switch recipe.title {
 		case "Spaghetti Carbonara":
-			addRecipeIngredient(recipeID, 1, "400", "g")  // Spaghetti
+			addRecipeIngredient(recipeID, 1, "400", "g")   // Spaghetti
 			addRecipeIngredient(recipeID, 2, "4", "large") // Eggs
-			addRecipeIngredient(recipeID, 3, "200", "g")  // Pancetta
-			addRecipeIngredient(recipeID, 4, "100", "g")  // Parmesan Cheese
-			addRecipeIngredient(recipeID, 5, "1", "tsp")  // Black Pepper
-			addRecipeIngredient(recipeID, 6, "1", "tsp")  // Salt
-			addRecipeTag(recipeID, 1) // Italian
-			addRecipeTag(recipeID, 3) // Dinner
+			addRecipeIngredient(recipeID, 3, "200", "g")   // Pancetta
+			addRecipeIngredient(recipeID, 4, "100", "g")   // Parmesan Cheese
+			addRecipeIngredient(recipeID, 5, "1", "tsp")   // Black Pepper
+			addRecipeIngredient(recipeID, 6, "1", "tsp")   // Salt
+			addRecipeTag(recipeID, 1)                      // Italian
+			addRecipeTag(recipeID, 3)                      // Dinner
 
 		case "Chicken Parmesan":
-			addRecipeIngredient(recipeID, 7, "2", "pieces")  // Chicken Breast
+			addRecipeIngredient(recipeID, 7, "2", "pieces") // Chicken Breast
 			addRecipeIngredient(recipeID, 8, "150", "g")    // Breadcrumbs
 			addRecipeIngredient(recipeID, 9, "100", "g")    // Mozzarella Cheese
 			addRecipeIngredient(recipeID, 10, "300", "ml")  // Tomato Sauce
 			addRecipeIngredient(recipeID, 11, "3", "tbsp")  // Olive Oil
 			addRecipeIngredient(recipeID, 4, "50", "g")     // Parmesan Cheese
 			addRecipeIngredient(recipeID, 2, "2", "large")  // Eggs
-			addRecipeTag(recipeID, 1) // Italian
-			addRecipeTag(recipeID, 3) // Dinner
+			addRecipeTag(recipeID, 1)                       // Italian
+			addRecipeTag(recipeID, 3)                       // Dinner
 
 		case "Pasta Primavera":
-			addRecipeIngredient(recipeID, 13, "350", "g")   // Penne Pasta
-			addRecipeIngredient(recipeID, 14, "1", "piece") // Bell Peppers
-			addRecipeIngredient(recipeID, 15, "1", "piece") // Zucchini
-			addRecipeIngredient(recipeID, 16, "200", "g")   // Cherry Tomatoes
-			addRecipeIngredient(recipeID, 12, "3", "cloves") // Garlic
-			addRecipeIngredient(recipeID, 11, "3", "tbsp")  // Olive Oil
+			addRecipeIngredient(recipeID, 13, "350", "g")     // Penne Pasta
+			addRecipeIngredient(recipeID, 14, "1", "piece")   // Bell Peppers
+			addRecipeIngredient(recipeID, 15, "1", "piece")   // Zucchini
+			addRecipeIngredient(recipeID, 16, "200", "g")     // Cherry Tomatoes
+			addRecipeIngredient(recipeID, 12, "3", "cloves")  // Garlic
+			addRecipeIngredient(recipeID, 11, "3", "tbsp")    // Olive Oil
 			addRecipeIngredient(recipeID, 17, "15", "leaves") // Basil
-			addRecipeIngredient(recipeID, 4, "50", "g")     // Parmesan Cheese
-			addRecipeTag(recipeID, 1) // Italian
-			addRecipeTag(recipeID, 2) // Quick
-			addRecipeTag(recipeID, 4) // Vegetarian
-			addRecipeTag(recipeID, 5) // Healthy
+			addRecipeIngredient(recipeID, 4, "50", "g")       // Parmesan Cheese
+			addRecipeTag(recipeID, 1)                         // Italian
+			addRecipeTag(recipeID, 2)                         // Quick
+			addRecipeTag(recipeID, 4)                         // Vegetarian
+			addRecipeTag(recipeID, 5)                         // Healthy
 
 		case "Garlic Butter Salmon":
 			addRecipeIngredient(recipeID, 20, "4", "fillets") // Salmon Fillet
-			addRecipeIngredient(recipeID, 18, "3", "tbsp")   // Butter
-			addRecipeIngredient(recipeID, 12, "4", "cloves") // Garlic
-			addRecipeIngredient(recipeID, 21, "1", "piece")  // Lemon
-			addRecipeIngredient(recipeID, 22, "2", "tbsp")   // Dill
-			addRecipeIngredient(recipeID, 11, "2", "tbsp")   // Olive Oil
-			addRecipeTag(recipeID, 2) // Quick
-			addRecipeTag(recipeID, 3) // Dinner
-			addRecipeTag(recipeID, 5) // Healthy
-			addRecipeTag(recipeID, 6) // Seafood
+			addRecipeIngredient(recipeID, 18, "3", "tbsp")    // Butter
+			addRecipeIngredient(recipeID, 12, "4", "cloves")  // Garlic
+			addRecipeIngredient(recipeID, 21, "1", "piece")   // Lemon
+			addRecipeIngredient(recipeID, 22, "2", "tbsp")    // Dill
+			addRecipeIngredient(recipeID, 11, "2", "tbsp")    // Olive Oil
+			addRecipeTag(recipeID, 2)                         // Quick
+			addRecipeTag(recipeID, 3)                         // Dinner
+			addRecipeTag(recipeID, 5)                         // Healthy
+			addRecipeTag(recipeID, 6)                         // Seafood
 		}
 	}
 }
@@ -372,7 +372,7 @@ func addRecipeTag(recipeID int64, tagID int) {
 // Handler functions
 func homeHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Route invoked: GET /")
-	
+
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -399,7 +399,7 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 
 func recipeDetailHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Route invoked: GET /recipes/<id>/")
-	
+
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -437,23 +437,23 @@ func recipeDetailHandler(w http.ResponseWriter, r *http.Request) {
 
 func apiOverviewHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Route invoked: GET /api")
-	
+
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
 	routes := map[string]string{
-		"create_user_url":       "http://localhost:3000/api/user/create/",
-		"current_user_url":      "http://localhost:3000/api/user/me/",
-		"user_token_url":        "http://localhost:3000/api/user/token/",
-		"recipes_url":           "http://localhost:3000/api/recipe/recipes/{?ingredients,tags}",
-		"recipe_url":           "http://localhost:3000/api/recipe/recipes/{id}/",
-		"recipe_image_url":     "http://localhost:3000/api/recipe/recipes/{id}/upload-image/",
-		"ingredients_url":      "http://localhost:3000/api/recipe/ingredients/{?assigned_only}",
-		"ingredient_url":       "http://localhost:3000/api/recipe/ingredients/{id}/",
-		"tags_url":              "http://localhost:3000/api/recipe/tags/{?assigned_only}",
-		"tag_url":               "http://localhost:3000/api/recipe/tags/{id}/",
+		"create_user_url":  "http://localhost:3000/api/user/create/",
+		"current_user_url": "http://localhost:3000/api/user/me/",
+		"user_token_url":   "http://localhost:3000/api/user/token/",
+		"recipes_url":      "http://localhost:3000/api/recipe/recipes/{?ingredients,tags}",
+		"recipe_url":       "http://localhost:3000/api/recipe/recipes/{id}/",
+		"recipe_image_url": "http://localhost:3000/api/recipe/recipes/{id}/upload-image/",
+		"ingredients_url":  "http://localhost:3000/api/recipe/ingredients/{?assigned_only}",
+		"ingredient_url":   "http://localhost:3000/api/recipe/ingredients/{id}/",
+		"tags_url":         "http://localhost:3000/api/recipe/tags/{?assigned_only}",
+		"tag_url":          "http://localhost:3000/api/recipe/tags/{id}/",
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -462,7 +462,7 @@ func apiOverviewHandler(w http.ResponseWriter, r *http.Request) {
 
 func userCreateHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Route invoked: POST /api/user/create/")
-	
+
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -499,7 +499,7 @@ func userCreateHandler(w http.ResponseWriter, r *http.Request) {
 
 func userMeHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Route invoked: GET/PUT/PATCH /api/user/me/")
-	
+
 	switch r.Method {
 	case http.MethodGet:
 		// Return mock user data
@@ -555,7 +555,7 @@ func userMeHandler(w http.ResponseWriter, r *http.Request) {
 
 func userTokenHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Route invoked: POST /api/user/token/")
-	
+
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -575,7 +575,7 @@ func userTokenHandler(w http.ResponseWriter, r *http.Request) {
 
 func recipeRecipesHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Route invoked: GET /api/recipe/recipes/")
-	
+
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -597,20 +597,20 @@ func recipeRecipesHandler(w http.ResponseWriter, r *http.Request) {
 
 func recipeRecipesCreateHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Route invoked: POST /api/recipe/recipes/")
-	
+
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
 	var recipeReq struct {
-		Title       string        `json:"title"`
-		TimeMinutes int           `json:"time_minutes"`
-		Price       string        `json:"price"`
-		Link        string        `json:"link"`
-		Tags        []Tag         `json:"tags"`
-		Ingredients []Ingredient  `json:"ingredients"`
-		Description string        `json:"description"`
+		Title       string       `json:"title"`
+		TimeMinutes int          `json:"time_minutes"`
+		Price       string       `json:"price"`
+		Link        string       `json:"link"`
+		Tags        []Tag        `json:"tags"`
+		Ingredients []Ingredient `json:"ingredients"`
+		Description string       `json:"description"`
 	}
 
 	err := json.NewDecoder(r.Body).Decode(&recipeReq)
@@ -650,7 +650,7 @@ func recipeRecipesCreateHandler(w http.ResponseWriter, r *http.Request) {
 
 func recipeIngredientsHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Route invoked: GET /api/recipe/ingredients/")
-	
+
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -682,7 +682,7 @@ func recipeIngredientsHandler(w http.ResponseWriter, r *http.Request) {
 
 func recipeTagsHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Route invoked: GET /api/recipe/tags/")
-	
+
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
