@@ -1,50 +1,35 @@
 # ---------------------------------------------------------
-# STAGE 1: The Builder (Building the executable)
+# STAGE 1: The Builder
 # ---------------------------------------------------------
-# Using 'golang:alpine' fetches the latest Go version to meet 1.25.6 requirements
 FROM golang:alpine AS builder
 
-# build-base includes gcc and tools needed for CGO (SQLite)
+# build-base is required for CGO (SQLite)
 RUN apk add --no-cache build-base
 
 WORKDIR /app
 
-# 1. Copy the dependency maps
-COPY go.mod go.sum ./
-
-# 2. Copy source code BEFORE tidy so Go can see your imports
+# 1. Copy everything (including go.mod AND your .go files)
+# We need the .go files so 'go mod tidy' can see what you are actually importing
 COPY . .
 
-# 3. Resolve dependencies
-# We use 'go get' to specifically pull the sqlite module causing the error
-RUN go get modernc.org/sqlite/v2
+# 2. Let Go find the right dependencies automatically
+# This will fix the 'v2' vs 'v1' issue by looking at your actual code
 RUN go mod tidy
 RUN go mod download
 
-# 4. Build the binary with CGO enabled
+# 3. Build the binary
 RUN CGO_ENABLED=1 GOOS=linux go build -o /app/cookbook
 
 # ---------------------------------------------------------
-# STAGE 2: The Runner (Creating the tiny production image)
+# STAGE 2: The Runner (The rest remains exactly the same)
 # ---------------------------------------------------------
 FROM alpine:latest
-
-# libc6-compat provides the standard C library for the Go binary to link against
 RUN apk add --no-cache ca-certificates libc6-compat
-
 WORKDIR /app
-
-# Copy the binary from the builder stage
 COPY --from=builder /app/cookbook /app/cookbook
-
-# Copy all your project assets/files
 COPY static/ static/
 COPY templates/ templates/
 COPY demo.db .
 COPY api-schema.yaml .
-
-# Standardize on Port 3000
 EXPOSE 3000
-
-# Run the application
 CMD ["./cookbook"]
