@@ -1,40 +1,41 @@
-# vi skal både bruge et styresystem og en builder til at kører go-apps, så først finder vi builderen som skal passe til styresystemet
+# 1. Builder Stage
 FROM golang:1.25-alpine AS builder
 
-# Install build dependencies for CGO
-RUN apk add --no-cache gcc musl-dev
+# We need build-base (which includes gcc and musl-dev) to compile CGO for SQLite
+RUN apk add --no-cache build-base
 
 WORKDIR /app
 
-# vi kopier og kører go.mod først, ellers bliver den sur over at dependensy ikke er der
+# Copy dependency files
 COPY go.mod go.sum ./
-RUN go mod download
 
+# DOWNLOAD & TIDY: This is the critical fix. 
+# It ensures all modules in your code are added to the mod file.
+RUN go mod download
+RUN go mod tidy 
+
+# Copy the rest of the source code
 COPY . .
 
-# build app
+# Build the app with CGO enabled
 RUN CGO_ENABLED=1 GOOS=linux go build -o /app/cookbook
 
-# alpine er en minimal linux distro som er så lille som mulig som kan kører vores app
-# hvorfor den skal have et styresystem, når py og node ikke skal er jeg ikke sikker på
+# 2. Final Run Stage
 FROM alpine:latest
 
-# Install required dependencies for SQLite
-RUN apk add --no-cache sqlite
+# SQLite doesn't usually need the full sqlite package installed to run the binary, 
+# but it DOES need the standard C libraries that Go linked against.
+RUN apk add --no-cache ca-certificates libc6-compat
 
-# det her er et nyt workdir i alpine styresystemet, så vi skal kopiere de filer vi skal bruge til at kører appen over "igen"
 WORKDIR /app
 
+# Copy the compiled binary from the builder
 COPY --from=builder /app/cookbook /app/cookbook
 
-# Copy static files
+# Copy static assets and database
 COPY static/ static/
 COPY templates/ templates/
-
-# Copy the database file
 COPY demo.db .
-
-# Copy openapi schema
 COPY api-schema.yaml .
 
 EXPOSE 3000
