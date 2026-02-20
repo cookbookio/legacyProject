@@ -2,10 +2,7 @@ module hello/app
 
 go 1.24.0
 
-require (
-	github.com/mattn/go-sqlite3 v1.14.34
-	modernc.org/sqlite v1.46.1
-)
+require modernc.org/sqlite v1.46.1
 
 require (
 	github.com/dustin/go-humanize v1.0.1 // indirect

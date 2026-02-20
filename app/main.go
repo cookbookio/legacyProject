@@ -7,11 +7,11 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
-	"os"
 
-	_ "github.com/mattn/go-sqlite3"
+	_ "modernc.org/sqlite"
 )
 
 // Database structure
@@ -122,15 +122,15 @@ func main() {
 
 	// For OpenAPI (swagger) spec
 	http.HandleFunc("/api-docs", func(w http.ResponseWriter, r *http.Request) {
-    // 1. Read your existing yaml file from disk
-    yamlFile, err := os.ReadFile("api-schema.yaml")
-    if err != nil {
-        http.Error(w, "Could not find api-schema.yaml", 500)
-        return
-    }
+		// 1. Read your existing yaml file from disk
+		yamlFile, err := os.ReadFile("api-schema.yaml")
+		if err != nil {
+			http.Error(w, "Could not find api-schema.yaml", 500)
+			return
+		}
 
-    // 2. Send back the HTML that renders that file
-    fmt.Fprintf(w, `
+		// 2. Send back the HTML that renders that file
+		fmt.Fprintf(w, `
     <!DOCTYPE html>
     <html>
     <head>
@@ -151,7 +151,7 @@ func main() {
         </script>
     </body>
     </html>`, string(yamlFile))
-})
+	})
 
 	// Start server
 	fmt.Println("Server starting on :3000...")
