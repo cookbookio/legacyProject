@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 
-	_ "modernc.org/sqlite/v2"
+	_ "modernc.org/sqlite"
 )
 
 func connectDB() (*sql.DB, error) {
