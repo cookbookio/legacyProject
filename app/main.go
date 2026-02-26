@@ -120,37 +120,41 @@ func main() {
 	http.HandleFunc("/api/recipe/ingredients/", recipeIngredientsHandler)
 	http.HandleFunc("/api/recipe/tags/", recipeTagsHandler)
 
-	// For OpenAPI (swagger) spec
-	http.HandleFunc("/api-docs", func(w http.ResponseWriter, r *http.Request) {
-		// 1. Read your existing yaml file from disk
+	// Serve the raw OpenAPI spec
+	http.HandleFunc("/swagger/openapi.yaml", func(w http.ResponseWriter, r *http.Request) {
 		yamlFile, err := os.ReadFile("api-schema.yaml")
 		if err != nil {
 			http.Error(w, "Could not find api-schema.yaml", 500)
 			return
 		}
+		w.Header().Set("Content-Type", "application/yaml")
+		w.Write(yamlFile)
+	})
 
-		// 2. Send back the HTML that renders that file
-		fmt.Fprintf(w, `
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css">
-        <title>API Documentation</title>
-    </head>
-    <body>
-        <div id="swagger-ui"></div>
-        <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
-        <script src="https://unpkg.com/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
-        <script>
-            // This takes the text from your file and tells Swagger to show it
-            const spec = jsyaml.load(%q);
-            SwaggerUIBundle({
-                spec: spec,
-                dom_id: '#swagger-ui',
-            });
-        </script>
-    </body>
-    </html>`, string(yamlFile))
+	// Swagger UI
+	http.HandleFunc("/swagger", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/html")
+		fmt.Fprint(w, `<!DOCTYPE html>
+<html>
+<head>
+    <title>API Documentation</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css">
+</head>
+<body>
+    <div id="swagger-ui"></div>
+    <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
+    <script>
+        SwaggerUIBundle({
+            url: "/swagger/openapi.yaml",
+            dom_id: '#swagger-ui',
+            presets: [SwaggerUIBundle.presets.apis, SwaggerUIBundle.SwaggerUIStandalonePreset],
+            layout: "BaseLayout"
+        });
+    </script>
+</body>
+</html>`)
 	})
 
 	// Start server
