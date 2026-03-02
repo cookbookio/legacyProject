@@ -9,7 +9,7 @@
 
 ## Type
 Select at least one (multiple allowed):
-- [ ] Update to `groups.py`
+- [ ] Update to `main.go`
 - [ ] Text Update
 - [ ] Feature
 - [ ] Bug
