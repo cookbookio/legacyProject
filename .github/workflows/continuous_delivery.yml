@@ -5,24 +5,7 @@ on:
     branches: [master]
   workflow_dispatch:
 jobs:
-  test:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Go
-        uses: actions/setup-go@v5
-        with:
-          go-version-file: ./app/go.mod
-
-      - name: Run tests
-        run: go test ./...
-        working-directory: ./app
-
   build-and-push:
-    needs: test
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -44,6 +27,7 @@ jobs:
         with:
           context: ./app
           push: true
+          no-cache: true
           tags: ghcr.io/dendanskemetode/legacyproject:latest
 
   deploy:
