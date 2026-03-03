@@ -69,14 +69,7 @@ jobs:
           key: ${{ secrets.VM_SSH_KEY }}
           script: |
             docker login ghcr.io -u "${{ github.actor }}" -p "${{ secrets.GITHUB_TOKEN }}"
-            
-            docker pull ghcr.io/dendanskemetode/legacyproject:${{ github.sha }}
-
-            docker stop legacyproject || true
-            docker rm legacyproject || true
-
-            docker run -d \
-              --name legacyproject \
-              --restart unless-stopped \
-              -p 3000:3000 \
-              ghcr.io/dendanskemetode/legacyproject:${{ github.sha }}
+            cd ~/legacyProject
+            git pull
+            docker compose pull
+            docker compose up -d --force-recreate
