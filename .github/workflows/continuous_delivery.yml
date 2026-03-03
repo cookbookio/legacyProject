@@ -68,8 +68,8 @@ jobs:
           username: ${{ secrets.VM_USER }}
           key: ${{ secrets.VM_SSH_KEY }}
           script: |
-            docker login ghcr.io -u "${{ github.actor }}" -p "${{ secrets.GITHUB_TOKEN }}"
+            sudo docker login ghcr.io -u "${{ github.actor }}" -p "${{ secrets.GITHUB_TOKEN }}"
             cd ~/legacyProject
-            git pull
-            docker compose pull
-            docker compose up -d --force-recreate
+            sudo git pull
+            sudo docker compose pull
+            sudo docker compose up -d --force-recreate
