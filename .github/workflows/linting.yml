@@ -31,5 +31,5 @@ jobs:
       - name: Run Hadolint
         uses: hadolint/hadolint-action@v3.1.0
         with:
-          dockerfile: "app/Dockerfile*" # kun dockerfile i app-mappe
+          dockerfile: "app/Dockerfile" # kun dockerfile i app-mappe
           failure-threshold: error
