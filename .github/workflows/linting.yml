@@ -18,7 +18,7 @@ jobs:
         uses: actions/setup-go@v4 # downloader seneste version af go
 
       - name: Run go vet 
-        run: go vet ./... # kører "go vet" som kun bliver succes hvis den ikke finder fejl
+        run: cd app && go vet ./... # kører "go vet" som kun bliver succes hvis den ikke finder fejl
 
   hadolint: # for docker filer
     name: Lint Dockerfiles

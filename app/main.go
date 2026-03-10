@@ -831,7 +831,6 @@ func getTagsForRecipe(recipeID int) ([]Tag, error) {
 		return nil, err
 	}
 	defer rows.Close()
-
 	var tags []Tag
 	for rows.Next() {
 		var tag Tag
