@@ -79,7 +79,7 @@ var (
 func main() {
 	var err error
 
-	var hello string = "test"
+	var suppe string = "test"
 
 	// Initialize database
 	db, err = sql.Open("sqlite", databasePath)
