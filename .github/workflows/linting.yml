@@ -1,0 +1,21 @@
+name: Go Vet Linting
+
+on:
+  push:
+    branches: [ "lintTesting" ]
+  pull_request:
+    branches: [ "lintTesting" ]
+
+jobs:
+  lint:
+    name: Lint with go vet
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4 # downloader seneste version af go
+
+      - name: Run go vet 
+        run: go vet ./... # kører "go vet" som kun bliver succes hvis den ikke finder fejl
