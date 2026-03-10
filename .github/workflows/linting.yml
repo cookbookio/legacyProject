@@ -2,12 +2,12 @@ name: Go Vet Linting
 
 on:
   push:
-    branches: [ "lintTesting" ]
+    branches: ["**"] # kører på alle branches
   pull_request:
-    branches: [ "lintTesting" ]
+    branches: ["**"]
 
 jobs:
-  lint:
+  lint_go: # for go kode
     name: Lint with go vet
     runs-on: ubuntu-latest
     steps:
@@ -19,3 +19,16 @@ jobs:
 
       - name: Run go vet 
         run: go vet ./... # kører "go vet" som kun bliver succes hvis den ikke finder fejl
+
+  hadolint: # for docker filer
+    name: Lint Dockerfiles
+    needs: lint_go  # Wait for lint-go to finish
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Run Hadolint
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: "**/Dockerfile*"
+          failure-threshold: error
