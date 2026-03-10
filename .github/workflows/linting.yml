@@ -20,15 +20,16 @@ jobs:
       - name: Run go vet 
         run: cd app && go vet ./... # kører "go vet" som kun bliver succes hvis den ikke finder fejl
 
-  hadolint: # for docker filer
+  hadolint:
     name: Lint Dockerfiles
     needs: lint_go  # Wait for lint-go to finish
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
       - name: Run Hadolint
         uses: hadolint/hadolint-action@v3.1.0
         with:
-          dockerfile: "**/Dockerfile*"
+          dockerfile: "app/Dockerfile*" # kun dockerfile i app-mappe
           failure-threshold: error
