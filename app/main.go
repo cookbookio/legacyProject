@@ -79,8 +79,6 @@ var (
 func main() {
 	var err error
 
-	var wadsdawds string = "test"
-
 	// Initialize database
 	db, err = sql.Open("sqlite", databasePath)
 	if err != nil {
